@@ -39,12 +39,12 @@ def scrap_it(sc):
     proxy_list = cur.execute('SELECT * FROM proxies').fetchall()
 
     # change proxy once per hour
-    proxy = proxy_list[datetime.datetime.now().hour % len(proxy_list)]
+    proxy = proxy_list[datetime.datetime.now().hour % len(proxy_list)][0]
 
     session = requests.Session()
     session.proxies = {
-        'http': 'http://{0}'.format(proxy[0]),
-        'https': 'https://{0}'.format(proxy[0]),
+        'http': 'http://{0}'.format(proxy),
+        'https': 'https://{0}'.format(proxy),
     }
 
     # html scrapper
@@ -77,8 +77,6 @@ def scrap_it(sc):
             delta += 1
         else:
             insert_values(cur, 'updates', (today + ' ' + datetime.datetime.now().strftime('%H:%M:%S'), delta))
-            cur.execute('INSERT INTO updates VALUES (?, ?)',
-                        (today + ' ' + datetime.datetime.now().strftime('%H:%M:%S'), delta))
 
             if title != last_title:
                 insert_values(
